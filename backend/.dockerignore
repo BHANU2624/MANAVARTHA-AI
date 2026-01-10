@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.env.local
+venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+*.log
+
+# Data files (should be mounted as volume)
+data/
+*.csv
+*.index
+*.faiss
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+QUICKSTART.md
+*.md
+
+# Test files
+test_*.py
+*_test.py
+
+# Batch/shell scripts
+*.bat
+*.ps1
+*.sh

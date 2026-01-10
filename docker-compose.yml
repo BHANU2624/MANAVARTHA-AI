@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: manavartha-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - COHERE_API_KEY=${COHERE_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      # Mount data directory (place your CSV file here)
+      - ./backend/data:/app/data
+      # Mount .env file for API keys
+      - ./backend/.env:/app/.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - manavartha-network
+
+networks:
+  manavartha-network:
+    driver: bridge

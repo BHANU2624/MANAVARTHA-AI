@@ -352,7 +352,74 @@ MANAVARTHA-AI/
 
 ## 🚢 Deployment
 
-### Backend Deployment (Example: Ubuntu Server)
+### Docker Deployment (Recommended)
+
+The easiest way to deploy the backend is using Docker:
+
+#### Prerequisites
+- Docker installed
+- Docker Compose installed
+
+#### Steps
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/BHANU2624/MANAVARTHA-AI.git
+cd MANAVARTHA-AI
+```
+
+2. **Configure environment:**
+```bash
+cd backend
+cp .env.example .env
+nano .env  # Add your API keys
+```
+
+3. **Place your data file:**
+Ensure `backend/data/all_telugu_chunk_embeddings_clean.csv` exists.
+
+4. **Build and run with Docker Compose:**
+```bash
+cd ..  # Back to root directory
+docker-compose up -d
+```
+
+5. **Check logs:**
+```bash
+docker-compose logs -f backend
+```
+
+6. **Stop the service:**
+```bash
+docker-compose down
+```
+
+#### Docker Commands Reference
+
+```bash
+# Build only
+docker-compose build
+
+# Start in foreground (see logs)
+docker-compose up
+
+# Start in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Restart
+docker-compose restart
+
+# Stop
+docker-compose down
+
+# Remove everything including volumes
+docker-compose down -v
+```
+
+### Manual Backend Deployment (Ubuntu Server)
 
 ```bash
 # Install dependencies
@@ -375,12 +442,67 @@ pip install gunicorn
 gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
-### Frontend Deployment (Example: Web)
+#### Using systemd (production)
+
+Create `/etc/systemd/system/manavartha.service`:
+
+```ini
+[Unit]
+Description=MANAVARTHA-AI Backend
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/path/to/MANAVARTHA-AI/backend
+Environment="PATH=/path/to/MANAVARTHA-AI/backend/venv/bin"
+ExecStart=/path/to/MANAVARTHA-AI/backend/venv/bin/gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start:
+```bash
+sudo systemctl enable manavartha
+sudo systemctl start manavartha
+sudo systemctl status manavartha
+```
+
+### Frontend Deployment (Web)
 
 ```bash
 cd telugu_news_app
-flutter build web
+flutter build web --release
 # Deploy the build/web directory to your hosting provider
+# (Netlify, Vercel, Firebase Hosting, GitHub Pages, etc.)
+```
+
+#### Deploy to Netlify
+```bash
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Deploy
+cd telugu_news_app
+flutter build web --release
+netlify deploy --prod --dir=build/web
+```
+
+#### Deploy to Firebase Hosting
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
+
+# Initialize
+cd telugu_news_app
+firebase init hosting
+
+# Build and deploy
+flutter build web --release
+firebase deploy --only hosting
 ```
 
 ## 🤝 Contributing
