@@ -31,10 +31,15 @@ genai.configure(api_key=GEMINI_API_KEY)
 gem_model = genai.GenerativeModel("models/gemini-2.5-flash")
 
 # ---------- LOAD FAISS ----------
-index = faiss.read_index(FAISS_INDEX_FILE)
-
-# ---------- LOAD METADATA ----------
-meta_df = pd.read_csv(METADATA_FILE)
+# Note: This will fail if index file doesn't exist. Create proper data files first.
+try:
+    index = faiss.read_index(FAISS_INDEX_FILE)
+    meta_df = pd.read_csv(METADATA_FILE)
+except Exception as e:
+    print(f"Warning: Could not load FAISS index or metadata: {e}")
+    print("This is expected if you haven't generated the data files yet.")
+    index = None
+    meta_df = None
 
 # ---------- HELPERS ----------
 def embed(text):
@@ -47,6 +52,9 @@ def embed(text):
 
 
 def answer_question(question):
+    if index is None or meta_df is None:
+        return "⚠️ Error: FAISS index or metadata not loaded. Please generate data files first."
+    
     try:
         q_emb = embed(question)
         D, I = index.search(q_emb, k=20)
