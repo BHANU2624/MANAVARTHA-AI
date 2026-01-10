@@ -4,24 +4,55 @@ __pycache__/
 *$py.class
 *.so
 .env
+.env.local
+.env.*.local
 venv/
+env/
+ENV/
 *.egg-info/
 .pytest_cache/
+*.log
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Data files
 *.csv
 data/
 backend/data/
+*.index
+*.faiss
 
 # IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
+.project
+.pydevproject
+.settings/
 
 # OS
 .DS_Store
 Thumbs.db
+*.bak
 
 # Flutter
 telugu_news_app/.dart_tool/
@@ -29,6 +60,36 @@ telugu_news_app/.flutter-plugins
 telugu_news_app/.flutter-plugins-dependencies
 telugu_news_app/.packages
 telugu_news_app/build/
+telugu_news_app/.pub-cache/
+telugu_news_app/.pub/
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Compiled files
+*.pyc
+*.pyo
+*.pyd
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
 # Misc
 *.log
+.cache/
+temp/
+tmp/

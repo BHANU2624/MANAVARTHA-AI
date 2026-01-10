@@ -12,11 +12,17 @@ FastAPI backend for Telugu News AI RAG application using:
    ```
 
 2. **Set up environment variables:**
-   Create a `.env` file in the `backend` directory:
+   Copy `.env.example` to `.env` and fill in your API keys:
+   ```bash
+   cp .env.example .env
    ```
-   COHERE_API_KEY=DSdAuREU39x4mYDJaSDZ3DEmGM1x8000F7BZuRf2
-   GEMINI_API_KEY=AIzaSyALIVRIoCOYGmoNWRkO4B2vRXK9pXYQaRU
+   
+   Then edit `.env` with your actual API keys:
    ```
+   COHERE_API_KEY=your_actual_cohere_api_key
+   GEMINI_API_KEY=your_actual_gemini_api_key
+   ```
+   
    Get your API keys from:
    - Cohere: https://dashboard.cohere.com/api-keys
    - Gemini: https://aistudio.google.com/app/apikey

@@ -6,10 +6,20 @@ import pandas as pd
 import cohere
 import google.generativeai as genai
 import re
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # ---------- CONFIG ----------
-COHERE_API_KEY = "DSdAuREU39x4mYDJaSDZ3DEmGM1x8000F7BZuRf2"
-GEMINI_API_KEY = "AIzaSyBdckMTtN1yJmpv9Px7HrQloIXz35KQZqg"
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not COHERE_API_KEY:
+    raise ValueError("COHERE_API_KEY not found in environment variables")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY not found in environment variables")
 
 FAISS_INDEX_FILE = "telugu_faiss_index.index"
 METADATA_FILE = "all_telugu_faiss_metadata.csv"
@@ -75,7 +85,22 @@ def answer_question(question):
 
 
 # ---------- FASTAPI ----------
-app = FastAPI()
+app = FastAPI(
+    title="Telugu News Q&A API",
+    description="RAG-based Telugu news question answering system",
+    version="1.0.0"
+)
+
+# Add CORS middleware
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify exact origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Query(BaseModel):
     question: str
