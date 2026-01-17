@@ -481,8 +481,9 @@ Your role is to extract and summarize relevant information from Telugu news arti
         
                     
             # Generate answer using Cohere Chat API (v2)
+            # Using command-r-plus as command-r was deprecated on Sept 15, 2025
             response = self.cohere_client.chat(
-                model="command-r",
+                model="command-r-plus",
                 message=query,
                 preamble=system_prompt,
                 documents=documents,
