@@ -2,11 +2,17 @@
 
 ## Step 1: Create .env File
 
-Create a file named `.env` in the `backend` directory with your API keys:
+Copy `.env.example` to `.env` and fill in your API keys:
+
+```bash
+cp .env.example .env
+```
+
+Then edit the `.env` file with your actual API keys:
 
 ```
-COHERE_API_KEY=DSdAuREU39x4mYDJaSDZ3DEmGM1x8000F7BZuRf2
-GEMINI_API_KEY=AIzaSyALIVRIoCOYGmoNWRkO4B2vRXK9pXYQaRU
+COHERE_API_KEY=your_actual_cohere_api_key
+GEMINI_API_KEY=your_actual_gemini_api_key
 ```
 
 Get your API keys from:
