@@ -381,6 +381,40 @@ class TeluguNewsRAG:
         
         return results
     
+    def _fallback_answer(self, retrieved_chunks: List[Tuple[str, float]], query: str, language: str) -> str:
+        """
+        Generate a fallback answer when Gemini API fails or returns blocked content.
+        Extracts key information directly from the retrieved chunks.
+        
+        Args:
+            retrieved_chunks: List of (chunk_text, similarity_score) tuples
+            query: User query
+            language: Detected language
+            
+        Returns:
+            Fallback answer string
+        """
+        if not retrieved_chunks:
+            if language == 'telugu':
+                return "సంబంధిత సమాచారం లభించలేదు."
+            else:
+                return "No relevant information found."
+        
+        # Extract the most relevant chunk
+        top_chunk = retrieved_chunks[0][0]
+        
+        # Truncate if too long (max 200 chars)
+        if len(top_chunk) > 200:
+            top_chunk = top_chunk[:200] + "..."
+        
+        # Build response based on language
+        if language == 'telugu':
+            return f"వార్తల ప్రకారం: {top_chunk}"
+        elif language == 'romanized':
+            return f"News prakaram: {top_chunk}"
+        else:
+            return f"According to the news: {top_chunk}"
+    
     def _build_system_prompt(self, language: str) -> str:
         """
         Build system prompt for Gemini API.
@@ -502,17 +536,28 @@ Your role is to extract and summarize relevant information from Telugu news arti
                 generation_config=genai.types.GenerationConfig(
                     temperature=0.3,
                     max_output_tokens=300,
-                )
+                ),
+                safety_settings={
+                    'HARASSMENT': 'block_none',
+                    'HATE_SPEECH': 'block_none',
+                    'SEXUALLY_EXPLICIT': 'block_none',
+                    'DANGEROUS_CONTENT': 'block_none',
+                }
             )
             
-            answer = response.text.strip()
+            # Check if response was blocked or empty
+            if not response or not response.text:
+                logger.warning("⚠️ Gemini response was blocked or empty")
+                # Fallback: extract key info from chunks
+                answer = self._fallback_answer(retrieved_chunks, query, language)
+            else:
+                answer = response.text.strip()
             
         except Exception as e:
-            logger.error(f"❌ Error generating answer: {e}")
-            if language == 'telugu':
-                answer = "క్షమించండి, సమాధానం రూపొందించడంలో సమస్య ఏర్పడింది. దయచేసి మళ్లీ ప్రయత్నించండి."
-            else:
-                answer = "Sorry, there was an error generating the answer. Please try again."
+            logger.error(f"❌ Error generating answer with Gemini: {str(e)}")
+            logger.error(f"   Error type: {type(e).__name__}")
+            # Use fallback answer generation
+            answer = self._fallback_answer(retrieved_chunks, query, language)
         
         # Prepare sources (top 3 chunks)
         sources = [chunk for chunk, _ in retrieved_chunks[:3]]
