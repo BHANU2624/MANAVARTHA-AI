@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
@@ -11,12 +12,12 @@ void main() {
   // 🔹 Handle early plugin messages (Flutter Web debug)
   ui.channelBuffers.setListener(
     'flutter/platform',
-    (ui.ByteData? data, ui.PlatformMessageResponseCallback? callback) {},
+    (ByteData? data, ui.PlatformMessageResponseCallback? callback) {},
   );
 
   ui.channelBuffers.setListener(
     'flutter/lifecycle',
-    (ui.ByteData? data, ui.PlatformMessageResponseCallback? callback) {},
+    (ByteData? data, ui.PlatformMessageResponseCallback? callback) {},
   );
 
   runApp(const MyApp());
