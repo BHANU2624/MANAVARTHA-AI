@@ -25,8 +25,20 @@ pip install -r requirements.txt
 
 ### 2. Configure Environment Variables
 Create a `.env` file in the `backend` directory:
+
+**On Linux/Mac:**
 ```bash
 cp .env.example .env
+```
+
+**On Windows (PowerShell):**
+```powershell
+Copy-Item .env.example .env
+```
+
+**On Windows (Command Prompt):**
+```cmd
+copy .env.example .env
 ```
 
 Edit `.env` and add your API keys:
@@ -42,6 +54,26 @@ backend/data/all_telugu_chunk_embeddings_clean.csv
 ```
 
 ### 4. Run Backend Server
+
+**On Linux/Mac:**
+```bash
+cd backend
+./start.sh
+```
+
+**On Windows (PowerShell):**
+```powershell
+cd backend
+.\start.ps1
+```
+
+**On Windows (Command Prompt):**
+```cmd
+cd backend
+start.bat
+```
+
+**Or manually (all platforms):**
 ```bash
 cd backend
 python main.py
@@ -101,6 +133,30 @@ curl "http://localhost:8000/search?query=eroju%20news%20highlights%20emiti"
   - Multi-language support (Telugu, English, Romanized Telugu)
 
 ## Troubleshooting
+
+### Files Not Found (Windows Users)
+If you get errors like "Cannot find path" for `.env.example` or `start.sh`:
+1. **Make sure you're on the correct branch:**
+   ```powershell
+   git fetch origin
+   git checkout copilot/fix-byte-data-type-error
+   git pull origin copilot/fix-byte-data-type-error
+   ```
+2. **Verify files exist:**
+   ```powershell
+   ls backend/.env.example
+   ls backend/start.ps1
+   ```
+3. **Use Windows-compatible commands:**
+   - Use `start.ps1` (PowerShell) or `start.bat` (Command Prompt)
+   - Use `Copy-Item` instead of `cp` in PowerShell
+   - Use `copy` instead of `cp` in Command Prompt
+
+### PowerShell Execution Policy Error
+If you get "execution of scripts is disabled" error:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
 
 ### Flutter Compilation Error
 If you see `'ByteData' isn't a type` error:
