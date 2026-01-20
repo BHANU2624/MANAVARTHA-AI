@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # MANAVARTHA-AI Backend Startup Script
 # This script starts the FastAPI backend server
@@ -44,4 +44,4 @@ echo "📚 API Docs available at http://localhost:8000/docs"
 echo ""
 
 # Start the server
-python main.py
+python3 main.py
