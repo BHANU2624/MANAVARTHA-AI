@@ -1,4 +1,3 @@
-import 'dart:typed_data' as ui;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
