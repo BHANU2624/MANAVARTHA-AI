@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 import faiss
 import cohere
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 # Configure logging
@@ -40,11 +41,18 @@ class TeluguNewsRAG:
         self.similarity_threshold = 0.30  # Minimum cosine similarity
         self.top_k = 7  # Number of chunks to retrieve
         
-        # Initialize Cohere client
-        api_key = os.getenv("COHERE_API_KEY")
-        if not api_key:
+        # Initialize Cohere client (for embeddings/retrieval)
+        cohere_api_key = os.getenv("COHERE_API_KEY")
+        if not cohere_api_key:
             raise ValueError("COHERE_API_KEY not found in environment variables")
-        self.cohere_client = cohere.Client(api_key)
+        self.cohere_client = cohere.Client(cohere_api_key)
+        
+        # Initialize Gemini client (for answer generation)
+        gemini_api_key = os.getenv("GEMINI_API_KEY")
+        if not gemini_api_key:
+            raise ValueError("GEMINI_API_KEY not found in environment variables")
+        genai.configure(api_key=gemini_api_key)
+        self.gemini_model = genai.GenerativeModel('gemini-2.0-flash-exp')
         
         # Load data and build index
         self.chunks, self.embeddings, self.index = self._load_and_build_index()
@@ -375,7 +383,7 @@ class TeluguNewsRAG:
     
     def _build_system_prompt(self, language: str) -> str:
         """
-        Build system prompt (preamble) for Cohere Chat API.
+        Build system prompt for Gemini API.
         
         Args:
             language: Detected language
@@ -465,30 +473,36 @@ Your role is to extract and summarize relevant information from Telugu news arti
                 "chunks_retrieved": 0
             }
         
-        # Generate answer using Cohere Chat API
+        # Generate answer using Gemini Flash 2.5
         try:
-            # Prepare documents for Chat API
-            documents = [
-                {
-                    "text": chunk,
-                    "id": f"doc_{i}"
-                }
+            # Prepare context from retrieved chunks
+            context_text = "\n\n".join([
+                f"Document {i+1}:\n{chunk}"
                 for i, (chunk, score) in enumerate(retrieved_chunks)
-            ]
+            ])
             
             # Build system prompt
             system_prompt = self._build_system_prompt(language)
-        
-                    
-            # Generate answer using Cohere Chat API (v2)
-            # Using command-r-plus as command-r was deprecated on Sept 15, 2025
-            response = self.cohere_client.chat(
-                model="command-r-plus",
-                message=query,
-                preamble=system_prompt,
-                documents=documents,
-                temperature=0.3,
-                max_tokens=300,
+            
+            # Combine system prompt, context, and query for Gemini
+            full_prompt = f"""{system_prompt}
+
+===== NEWS DOCUMENTS =====
+{context_text}
+
+===== USER QUERY =====
+{query}
+
+===== YOUR ANSWER =====
+"""
+            
+            # Generate answer using Gemini Flash 2.5
+            response = self.gemini_model.generate_content(
+                full_prompt,
+                generation_config=genai.types.GenerationConfig(
+                    temperature=0.3,
+                    max_output_tokens=300,
+                )
             )
             
             answer = response.text.strip()
