@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pandas
+beautifulsoup4
+requests
+python-multipart
+nest-asyncio
+faiss-cpu        # or faiss-gpu if you have GPU
+cohere           # optional - if using cohere embeddings; remove if using different provider
+python-dotenv
