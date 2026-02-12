@@ -20,6 +20,20 @@ echo "🔄 Updating System..."
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y python3-pip python3-venv git
 
+# 1.5 Setup Swap (Crucial for 8GB RAM)
+if ! sudo swapon --show | grep -q "/swapfile"; then
+    echo "🧠 Creating 4GB Swap File..."
+    sudo fallocate -l 4G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+    echo "✅ Swap Created."
+else
+    echo "✅ Swap already exists."
+fi
+
+
 # 2. Setup Project
 if [ ! -d "$PROJECT_DIR" ]; then
     echo "📂 Cloning Repository..."
