@@ -1,0 +1,14 @@
+ 
+google-generativeai
+fastapi
+uvicorn[standard]
+pandas
+numpy
+faiss-cpu
+cohere
+python-dotenv
+pydantic
+python-multipart
+sqlalchemy
+psycopg2-binary
+requests
