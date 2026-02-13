@@ -34,3 +34,12 @@ telugu_news_app/build/
 
 # Misc
 *.log
+# Large datasets
+backend/data/
+*.faiss
+*.index
+*.bin
+*.pkl
+
+# Secrets
+.env
